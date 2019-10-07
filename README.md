@@ -1,5 +1,7 @@
 # DeepSEA Analyses
 
+![deepsea_logo.jpg](./deepsea_logo.jpg)
+
 ## Introduction  
 
 <h4> 
@@ -12,7 +14,7 @@ Most GWAS hits fall within non-coding regions of the genome which makes function
 
 ## Methods
 
-See full code [here](./DeepSEA.R)  
+See full code [here](./DeepSEA.R).  
 
 ### 1. Preprocess Raw Genotype Data
 
