@@ -7,7 +7,7 @@
 <h4> 
 Most GWAS hits fall within non-coding regions of the genome which makes functional interpretations of disease-associated variants challenging (relative to protein-coding regions). Kunkle et al. (2019) published the largest Alzheimer's Disease (AD) GWAS to date that identifed 24 AD-associated genetic loci. While we only have accesss to the summary statistics from that study, we do have access to ROSMAP, which is a large multi-omics dataset that includes whole-genome sequencing data for 405 Alzheimer's Disease patients.  
 
-<br>  
+<br><br>  
 
 [DeepSEA](deepsea.princeton.edu) is a deep learning-based epigenomic mark prediction algorithm. Here, we apply this algorithm to the ROSMAP genomic data (subset according to the AD-associated loci identified by Kunkle et al (2019)) in order to elucideate the regulatory mechanisms, as well as relevant tissues and cell types, through which AD emerges.
 </h4>
