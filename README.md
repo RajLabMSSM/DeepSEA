@@ -10,8 +10,9 @@ Most GWAS hits fall within non-coding regions of the genome which makes function
 
 <hr>
 
-## Methods  
+## Methods
 
+See full code [here](./DeepSEA.R)  
 
 ### 1. Preprocess Raw Genotype Data
 
@@ -23,7 +24,10 @@ Most GWAS hits fall within non-coding regions of the genome which makes function
 	+ *PTK2B*  
 	+ *SPI1*  
 	+ *TREM2*
-- For each locus VCF file, we then used `bcftools` to remove any variants that had allele sequence length (reference or alternative) greater than 100 and replaced aterisks (indicating deletions) with blanks, as required by DeepSEA.  
+- For each locus VCF file, we then used `bcftools` to:
+	+ forced multi-allelic sites to be biallelic using `bcftools norm -m-`. 
+	remove any variants that had allele sequence length (reference or alternative) > 100
+	+ replaced aterisks (indicating deletions) with blanks, as required by DeepSEA.  
 
 
 ### 2. Run DeepSEA
@@ -48,8 +52,9 @@ Most GWAS hits fall within non-coding regions of the genome which makes function
 - **Figure 1.** :: *Cross-prediction Correlations*: To identify whether some DeepSEA predictions tended to covary, we calculated pair-wise Pearson's R correlations.
 	+ *Results Summary*: `eQTL-probability` and `GWAS-probability` were highly correlated, which agrees with previous consistent observations that GWAS and eQTL overlapping sets of variants in part due to linkage disequilibrium (LD).  
 	+ Download full-sized file [here](https://github.com/RajLabMSSM/DeepSEA/raw/master/ROSMAP/_plots/DeepSEA.predict.enrich.png).
+	
 
-![DeepSEA.predict.enrich.png](./ROSMAP/_plots/DeepSEA.predict.enrich.png)
+![DeepSEA.predict.enrich.png](./ROSMAP/_plots/DeepSEA.corrplot.png)
 
 - **Figure 2.** :: *GWAS + DeepSEA Track Plot*: A stacked track plot shows (top to bottom):
 	+ `Kunkle (2019) GWAS`: -log10 of the nominal p-value from the Kunkle et al. (2019) GWAS
@@ -58,6 +63,7 @@ Most GWAS hits fall within non-coding regions of the genome which makes function
 	+ `HGMD-probability`
 	+ `Functional significance score`
 	+ `Enrichment`: Bar plots of of the logFC for the top SNPs with the highest `Functional significance score` within that locus. RSIDs are shown above their respective annotations, which include information about the tissue/cell line from which they came. There are many more signficant enrichment results but we just focused on these three per locus since they were most likely to have a functional impact.
+	+ Download full-sized file [here](https://github.com/RajLabMSSM/DeepSEA/raw/master/ROSMAP/_plots/DeepSEA.predict.enrich.png).
  
 <hr>
 	 
