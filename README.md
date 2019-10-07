@@ -3,7 +3,7 @@
 ## Introduction  
 
 <h4> 
-Most GWAS hits fall within non-coding regions of the genome which makes functional interpretations of disease-associated variants challenging (relative to protein-coding regions). Kunkle et al. (2019) published the largest Alzheimer's Disease (AD) GWAS to date. ROSMAP is a large multi-omics dataset that includes whole-genome sequencing data for NN Alzheimer's Disease patients.  
+Most GWAS hits fall within non-coding regions of the genome which makes functional interpretations of disease-associated variants challenging (relative to protein-coding regions). Kunkle et al. (2019) published the largest Alzheimer's Disease (AD) GWAS to date that identifed 24 AD-associated genetic loci. While we only have accesss to the summary statistics from that study, we do have access to ROSMAP, which is a large multi-omics dataset that includes whole-genome sequencing data for 405 Alzheimer's Disease patients.  
 
 [DeepSEA](deepsea.princeton.edu) is a deep learning-based epigenomic mark prediction algorithm. Here, we apply this algorithm to the ROSMAP genomic data (subset according to the AD-associated loci identified by Kunle et al (2019)) in order to elucideate the regulatory mechanisms, as well as relevant tissues and cell types, through which AD emerges.
 </h4>
@@ -51,10 +51,10 @@ See full code [here](./DeepSEA.R)
 
 - **Figure 1.** :: *Cross-prediction Correlations*: To identify whether some DeepSEA predictions tended to covary, we calculated pair-wise Pearson's R correlations.
 	+ *Results Summary*: `eQTL-probability` and `GWAS-probability` were highly correlated, which agrees with previous consistent observations that GWAS and eQTL overlapping sets of variants in part due to linkage disequilibrium (LD).  
-	+ Download full-sized file [here](https://github.com/RajLabMSSM/DeepSEA/raw/master/ROSMAP/_plots/DeepSEA.predict.enrich.png).
+	+ Download full-sized file [here](https://github.com/RajLabMSSM/DeepSEA/raw/master/ROSMAP/_plots/DeepSEA.corrplot.png).
 	
 
-![DeepSEA.predict.enrich.png](./ROSMAP/_plots/DeepSEA.corrplot.png)
+![DeepSEA.predict.enrich.png](./ROSMAP/_plots/DeepSEA.predict.enrich.png)
 
 - **Figure 2.** :: *GWAS + DeepSEA Track Plot*: A stacked track plot shows (top to bottom):
 	+ `Kunkle (2019) GWAS`: -log10 of the nominal p-value from the Kunkle et al. (2019) GWAS

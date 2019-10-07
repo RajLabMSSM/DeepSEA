@@ -200,7 +200,7 @@
 ##bcftools_normVersion=1.9+htslib-1.9
 ##bcftools_normCommand=norm -m-; Date=Thu Oct  3 15:01:31 2019
 ##bcftools_viewVersion=1.9+htslib-1.9
-##bcftools_viewCommand=view -e '(STRLEN(REF)>100) | (STRLEN(ALT)>100)'; Date=Thu Oct  3 15:01:31 2019
+##bcftools_viewCommand=view -e 'a(STRLEN(REF)>100) | (STRLEN(ALT)>100)'; Date=Thu Oct  3 15:01:31 2019
 #CHROM	POS	ID	REF	ALT
 12	40590620	.	C	T
 12	40591612	.	G	T
