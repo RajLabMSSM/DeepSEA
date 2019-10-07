@@ -5,7 +5,7 @@
 <h4> 
 	Most GWAS hits fall within non-coding regions of the genome which makes functional interpretations of disease-associated variants challenging (relative to protein-coding regions). Kunkle et al. (2019) published the largest Alzheimer's Disease (AD) GWAS to date. ROSMAP is a large multi-omics dataset that includes whole-genome sequencing data for NN Alzheimer's Disease patients.  
 
-	DeepSEA is a deep learning-based epigenomic mark prediction algorithm. Here, we apply this algorithm to the ROSMAP genomic data (subset according to the AD-associated loci identified by Kunle et al (2019)) in order to elucideate the regulatory mechanisms, as well as relevant tissues and cell types, through which AD emerges.
+	[DeepSEA](deepsea.princeton.edu) is a deep learning-based epigenomic mark prediction algorithm. Here, we apply this algorithm to the ROSMAP genomic data (subset according to the AD-associated loci identified by Kunle et al (2019)) in order to elucideate the regulatory mechanisms, as well as relevant tissues and cell types, through which AD emerges.
 </h4>
 
 <hr>
@@ -21,10 +21,10 @@
 		+ *PTK2B*  
 		+ *SPI1*  
 		+ *TREM2*
-	- For each locus VCF file, we then used ``bcftools`` to remove any variants that had allele sequence length (reference or alternative) greater than 100 and replaced aterisks (indicating deletions) with blanks, as required by DeepSEA.  
+	- For each locus VCF file, we then used `bcftools` to remove any variants that had allele sequence length (reference or alternative) greater than 100 and replaced aterisks (indicating deletions) with blanks, as required by DeepSEA.  
 
 ### 2. Run DeepSEA
-	- We submitted each locus VCF to the DeepSEA server via the web application (http://deepsea.princeton.edu), and downloaded the variant-level results as text files. Resulting metrics include:
+	- We submitted each locus VCF to the DeepSEA server via the web application (deepsea.princeton.edu), and downloaded the variant-level results as text files. Resulting metrics include:
 		+ `eQTL-probability`: Probability that the position is an eQTL in the GRASP Database.   
 		+ `GWAS-probability`: Probability that the position is a significant hit in the GWAS Catalogue. 
 		+ `HGMD-probability`: Probability that the position is deleterious, according to the HGMD database
@@ -40,6 +40,7 @@
 
 	- **Figure 1.** :: *Cross-prediction Correlations*: To identify whether some DeepSEA predictions tended to covary, we calculated pair-wise Pearson's R correlations.
 		+ *Results Summary*: `eQTL-probability` and `GWAS-probability` were highly correlated, which agrees with previous consistent observations that GWAS and eQTL overlapping sets of variants in part due to linkage disequilibrium (LD).  
+		+ Download full-sized file [here](https://github.com/RajLabMSSM/DeepSEA/raw/master/ROSMAP/_plots/DeepSEA.predict.enrich.png).
 
 ![DeepSEA.predict.enrich.png](./ROSMAP/_plots/DeepSEA.predict.enrich.png)
 
@@ -59,7 +60,7 @@
 
 - * Zhou, Jian, and Olga G. Troyanskaya. “Predicting Effects of Noncoding Variants with Deep Learning-Based Sequence Model.” Nature Methods 12, no. 10 (2015): 931–34. https://doi.org/10.1038/nmeth.3547. *
 
-- [DeepSEA online server](http://deepsea.princeton.edu/job/analysis/create)  
+- [DeepSEA online server](deepsea.princeton.edu)  
 
 - [Tensorflow implementation of DeepSEA](https://github.com/danvk/deepsea)  
 
