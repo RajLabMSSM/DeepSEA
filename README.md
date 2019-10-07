@@ -29,9 +29,9 @@ See full code [here](./DeepSEA.R).
 	+ *SPI1*  
 	+ *TREM2*
 - For each locus VCF file, we then used `bcftools` to:
-	+ forced multi-allelic sites to be biallelic using `bcftools norm -m-`. 
+	+ force multi-allelic sites to be biallelic using `bcftools norm -m-`. 
 	remove any variants that had allele sequence length (reference or alternative) > 100
-	+ replaced aterisks (indicating deletions) with blanks, as required by DeepSEA.  
+	+ replace aterisks (indicating deletions) with blanks, as required by DeepSEA.  
 
 
 ### 2. Run DeepSEA
