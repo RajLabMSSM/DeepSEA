@@ -9,7 +9,7 @@ Most GWAS hits fall within non-coding regions of the genome which makes function
 
 <br>  
 
-[DeepSEA](deepsea.princeton.edu) is a deep learning-based epigenomic mark prediction algorithm. Here, we apply this algorithm to the ROSMAP genomic data (subset according to the AD-associated loci identified by Kunkle et al (2019)) in order to elucideate the regulatory mechanisms, as well as relevant tissues and cell types, through which AD emerges.
+[DeepSEA](deepsea.princeton.edu) is a deep learning-based epigenomic mark prediction algorithm. Here, we apply this algorithm to the ROSMAP genomic data (subset according to the AD-associated loci identified by Kunkle et al (2019)) in order to elucidate the regulatory mechanisms, as well as relevant tissues and cell types, through which AD emerges.
 </h4>
 
 <hr>

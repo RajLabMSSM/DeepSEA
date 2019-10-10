@@ -5,12 +5,17 @@
 # Results generated using DeepSEA online server(http://deepsea.princeton.edu/help/)
 ## or the selene python module (https://github.com/FunctionLab/selene/blob/master/tutorials/analyzing_mutations_with_trained_models/analyzing_mutations_with_trained_models.ipynb).
 
-root <- "~/Desktop/Fine_Mapping/"
+library(dplyr)
+library(ggplot2)
+library(ggrepel)
+
+printer <- function(..., v=T){if(v){print(paste(...))}}
+root <- "~/Desktop/Fine_Mapping"
 
 DeepSEA.subset_kunkle <- function(locally=T){
   # Summary stats
   if(locally){
-    kunk <- data.table::fread(filepath(root,"./Data/GWAS/Kunkle_2019/Kunkle_etal_Stage1_results.txt.gz", nThread = 4))
+    kunk <- data.table::fread(filepath(root,"Data/GWAS/Kunkle_2019/Kunkle_etal_Stage1_results.txt.gz", nThread = 4))
   } else {
     kunk <- data.table::fread("/sc/orga/projects/ad-omics/data/AD_GWAS/Kunkle_2019/Kunkle_etal_Stage1_results.txt", 
                               nThread = 4) 
@@ -18,7 +23,7 @@ DeepSEA.subset_kunkle <- function(locally=T){
   kunk$Pvalue <- as.numeric(kunk$Pvalue) 
   kunk.sig <- subset(kunk, Pvalue<=0.05)
   # Locus coordinates 
-  kunkle_loci <- readxl::read_excel(file.path(root, "./Data/GWAS/Kunkle_2019/Kunkle2019_supplementary_tables.xlsx"), 
+  kunkle_loci <- readxl::read_excel(file.path(root, "Data/GWAS/Kunkle_2019/Kunkle2019_supplementary_tables.xlsx"), 
                                     sheet = "Supplementary Table 8") %>%
     dplyr::select(Locus=`Lead SNV Gene`,SNP=`Top Associated SNV`, LD_block=`LD Block (GRCh37)`) %>% 
     data.table::data.table() %>% 
@@ -41,7 +46,7 @@ DeepSEA.subset_kunkle <- function(locally=T){
   subset(kunkle.merge, FDR<=0.05)  %>% dplyr::group_by(Locus) %>% tally() %>% data.frame()
   kunkle.merge.sig <- subset(kunkle.merge, FDR<=0.05) 
   
-  data.table::fwrite(kunkle.merge.sig,file.path(root, "./Data/GWAS/Kunkle_2019/Kunkle_Stage1_sig.txt"), sep="\t")
+  data.table::fwrite(kunkle.merge.sig,file.path(root, "Data/GWAS/Kunkle_2019/Kunkle_Stage1_sig.txt"), sep="\t")
 }
 
 
@@ -69,7 +74,7 @@ DeepSEA.vcf_subset <- function(locally=T){
     printer("DeepSEA:: Preparing locus",locus,"...")
     regions.file <- file.path(vcf_folder, paste0(locus,".regions.txt"))
     if(locus=="LRRK2"){
-      finemap_DT <- data.table::fread(file.path(root,"./Data/GWAS/Nalls23andMe_2019/LRRK2/Multi-finemap/Multi-finemap_results.txt"))
+      finemap_DT <- data.table::fread(file.path(root,"Data/GWAS/Nalls23andMe_2019/LRRK2/Multi-finemap/Multi-finemap_results.txt"))
       coords <- data.frame(CHROM=unique(finemap_DT$CHR),POS=sort(subset(finemap_DT, P<=5e-8)$POS) )
     }else { 
       kunkle.sub <- subset(kunkle.merge.sig, Locus==locus) 
@@ -149,8 +154,9 @@ DeepSEA.gather_enrichment <- function(deepsea_path, top_annots=F){
 }
 
 
-DeepSEA.prepare_data <- function(deepsea_path="./ROSMAP",
-                                 GWAS_path=file.path(root,"./Data/GWAS/Kunkle_2019/Kunkle_etal_Stage1_results.txt.gz") ){
+DeepSEA.prepare_data <- function(root="~/Desktop/Fine_Mapping",
+                                 deepsea_path="./ROSMAP",
+                                 GWAS_path=file.path(root,"Data/GWAS/Kunkle_2019/Kunkle_etal_Stage1_results.txt.gz") ){
   # merge DeepSEA results
   DS.predict <- DeepSEA.gather_predictions(deepsea_path)
   DS.enrich <- DeepSEA.gather_enrichment(deepsea_path, top_annots=1)
@@ -220,9 +226,13 @@ DeepSEA.plot_predictions <- function(deepsea.DAT,
                                               value.name = "Probability") 
   deepsea.melt <- subset(deepsea.melt, Prediction %in% keep_cols, drop=F)
   deepsea.melt$Prediction <- gsub("-| ","\n", deepsea.melt$Prediction)
+  deepsea.melt <- deepsea.melt %>% arrange(pos)
   deepsea.melt$Prediction <- factor(deepsea.melt$Prediction, levels = unique(deepsea.melt$Prediction) )
+  deepsea.melt <- deepsea.melt %>% arrange(pos)
+  deepsea.melt$Mb <- deepsea.melt$pos/1000000
+  
   # Plot
-  gp <- ggplot(data=deepsea.melt, aes(x=pos, y=Probability, color=Probability)) +
+  gp <- ggplot(data=deepsea.melt, aes(x=Mb, y=Probability, color=Probability)) +
     geom_point() + 
     facet_grid(Prediction~Locus, scales = "free", drop = T) + 
     theme_dark() +
@@ -239,16 +249,17 @@ DeepSEA.plot_predictions <- function(deepsea.DAT,
                      seed = 1, 
                      size = 3,
                      min.segment.length = 1) + 
-    theme(axis.title.x=element_blank(),
-          axis.text.x=element_blank(),
-          axis.ticks.x=element_blank(),
+    theme(#axis.title.x=element_blank(),
+          # axis.text.x=element_blank(),
+          # axis.ticks.x=element_blank(),
           plot.title = element_text(hjust = 0.5),
           plot.subtitle = element_text(hjust = 0.5),
           rect = element_rect(fill = "transparent"),
           panel.background = element_rect(fill = "transparent"),
           strip.text.y = element_text(angle = 0),
           panel.grid.major = element_blank(), 
-          panel.grid.minor = element_blank())  
+          panel.grid.minor = element_blank())  +
+    scale_x_continuous(labels=function(x) sprintf("%.2f", x))
   if(facet_xlabs==F){
     gp <- gp + 
       theme( strip.background.x = element_blank(), 
@@ -256,7 +267,7 @@ DeepSEA.plot_predictions <- function(deepsea.DAT,
   }
   if(custom_ylab!=F){
     gp <- gp + labs(y=custom_ylab, color=custom_ylab) 
-  }
+  } else {gp <- gp +scale_y_continuous(limits = c(0,1.1), breaks = c(0,.5, 1))  }
   return(gp)
 }
 
@@ -300,8 +311,10 @@ DeepSEA.plot_enrichment <- function(deepsea.DAT, label.snps){
 
 
 
-DeepSEA.stacked_plots <- function(deepsea.DAT=DeepSEA.prepare_data(deepsea_path="./ROSMAP",
-                                                                   GWAS_path=file.path(root,"./Data/GWAS/Kunkle_2019/Kunkle_etal_Stage1_results.txt.gz") ),
+DeepSEA.stacked_plots <- function(root="~/Desktop/Fine_Mapping/",
+                                  deepsea_path="./ROSMAP",
+                                  deepsea.DAT=DeepSEA.prepare_data(deepsea_path=deepsea_path,
+                                                                   GWAS_path=file.path(root,"Data/GWAS/Kunkle_2019/Kunkle_etal_Stage1_results.txt.gz") ),
                                   label_topn=3){   
   # Get the top n SNPs to label
   label.snps <- (deepsea.DAT %>% dplyr::select(Locus, SNP, `Functional significance score`) %>%
@@ -309,6 +322,7 @@ DeepSEA.stacked_plots <- function(deepsea.DAT=DeepSEA.prepare_data(deepsea_path=
     top_n(n=label_topn, wt=`Functional significance score`))$SNP
   deepsea.DAT <- subset(deepsea.DAT, !(Locus %in% c("LRRK2",NA)) ) %>% 
     dplyr::mutate("Kunkle(2019) GWAS"= -log10(as.numeric(Pvalue)))
+  
 
   # GWAS row  
   gp1 <- DeepSEA.plot_predictions(deepsea.DAT, 
@@ -327,8 +341,10 @@ DeepSEA.stacked_plots <- function(deepsea.DAT=DeepSEA.prepare_data(deepsea_path=
   
   # merge all plots
   # cowplot::plot_grid(gp1, gp2, ep, ncol = 1)
-  gg <- ggpubr::ggarrange(gp1, gp2, ep, nrow = 3, align = c("hv"), widths = c(1,1,.8))
-   
+  gg <- ggpubr::ggarrange(gp1, gp2, ep, nrow = 3, align = c("hv"), 
+                          widths = c(1,.8,.5), 
+                          heights = c(.5,1.5,.75))
+  # gg
   if(save_path!=F){
     ggsave(filename = file.path(deepsea_path,"_plots","DeepSEA.predict.enrich.png"),
            plot = gg, dpi = 600, height=10, width=25)
