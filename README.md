@@ -9,7 +9,7 @@ Most GWAS hits fall within non-coding regions of the genome which makes function
 
 <br>  
 
-[DeepSEA](deepsea.princeton.edu) is a deep learning-based epigenomic mark prediction algorithm. Here, we apply this algorithm to the ROSMAP genomic data (subset according to the AD-associated loci identified by Kunkle et al (2019)) in order to elucidate the regulatory mechanisms, as well as relevant tissues and cell types, through which AD emerges.
+[DeepSEA](http://deepsea.princeton.edu) is a deep learning-based epigenomic mark prediction algorithm. Here, we apply this algorithm to the ROSMAP genomic data (subset according to the AD-associated loci identified by Kunkle et al (2019)) in order to elucidate the regulatory mechanisms, as well as relevant tissues and cell types, through which AD emerges.
 </h4>
 
 <hr>
@@ -36,7 +36,7 @@ See full code [here](./DeepSEA.R).
 
 ### 2. Run DeepSEA
 
-- We submitted each locus VCF to the DeepSEA server via the web application (deepsea.princeton.edu), and downloaded the variant-level results as text files. Resulting metrics include:
+- We submitted each locus VCF to the DeepSEA server via the [web application](http://deepsea.princeton.edu), and downloaded the variant-level results as text files. Resulting metrics include:
 	+ `eQTL-probability`: Probability that the position is an eQTL in the GRASP Database.   
 	+ `GWAS-probability`: Probability that the position is a significant hit in the GWAS Catalogue. 
 	+ `HGMD-probability`: Probability that the position is deleterious, according to the HGMD database
