@@ -30,7 +30,7 @@ See full code [here](./DeepSEA.R).
 	+ *TREM2*
 - For each locus VCF file, we then used `bcftools` to:
 	+ force multi-allelic sites to be biallelic using `bcftools norm -m-`.  
-	+ remove any variants that had allele sequence length (reference or alternative) > 100.
+	+ remove any variants that have allele sequence length (reference or alternative) > 100.
 	+ replace aterisks (indicating deletions) with blanks, as required by DeepSEA.  
 
 
