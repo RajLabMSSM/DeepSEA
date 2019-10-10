@@ -39,7 +39,7 @@ See full code [here](./DeepSEA.R).
 - We submitted each locus VCF to the DeepSEA server via the [web application](http://deepsea.princeton.edu), and downloaded the variant-level results as text files. Resulting metrics include:
 	+ `eQTL-probability`: Probability that the position is an eQTL in the GRASP Database.   
 	+ `GWAS-probability`: Probability that the position is a significant hit in the GWAS Catalogue. 
-	+ `HGMD-probability`: Probability that the position is deleterious, according to the HGMD database
+	+ `HGMD-probability`: Probability that mutations in the position are deleterious, according to the HGMD database.
 	+ `Functional significance score`: Aggregate probability that mutations at this position have a functional impact.
 	+ `logFC`: log fold-change enrichment score (computed by comparing the differnces between the predicted effects of the ref vs. alt alleles) for each SNP for each epigenetic annotation.
 
