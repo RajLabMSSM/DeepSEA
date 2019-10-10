@@ -190,12 +190,12 @@ DeepSEA.prepare_data <- function(root="~/Desktop/Fine_Mapping",
 
 
 
-DeepSEA.corrplot <- function(deepsea_path="./ROSMAP", deepsea.DAT, save_path=F){ 
+DeepSEA.corrplot <- function(deepsea_path="./ROSMAP", deepsea.DAT, save_image=F){ 
   # PP.cols <- c(grep(".Probability",colnames(deepsea.DAT), value = T), "mean.PP")
   cor.dat <- deepsea.DAT[,c("eQTL-probability","GWAS-probability","HGMD-probability","Functional significance score")]
   cor.df <- cor(cor.dat)
   cor.df[is.na(cor(cor.dat))] <- 0 
-  if(save_path!=F){png(file = file.path(deepsea_path,"_plots","DeepSEA.corrplot.png") )}
+  if(save_image){png(file = file.path(deepsea_path,"_plots","DeepSEA.corrplot.png") )}
   corrplot::corrplot(cor.df,
                      # title = "Correlations Between Fine-mapping PPs and DeepSEA Predictions",
                      bg = "black",
@@ -246,11 +246,11 @@ DeepSEA.plot_predictions <- function(deepsea.DAT,
     scale_color_viridis_c() +  
     geom_hline(yintercept = 0) +  
     geom_point(data=subset(deepsea.melt, SNP %in% label.snps ), 
-               pch=21, fill=NA, size=4, color="blue", stroke=1.5, alpha=0.8,  label.padding = .25,) +
+               pch=21, fill=NA, size=4, color="blue", stroke=1.5, alpha=0.8) +
     geom_label_repel(data=subset(deepsea.melt, SNP %in% label.snps ), aes(label=SNP), 
                      alpha=.7,
                      # aes(color=Probability),  
-                     nudge_x = .5,  
+                     # nudge_x = .5,  
                      label.padding = .25,
                      label.size=NA, 
                      seed = 1, 
@@ -273,7 +273,10 @@ DeepSEA.plot_predictions <- function(deepsea.DAT,
   }
   if(custom_ylab!=F){
     gp <- gp + labs(y=custom_ylab, color=custom_ylab) 
-  } else {gp <- gp +scale_y_continuous(limits = c(0,1.1), breaks = c(0,.5, 1))  }
+  } else {
+    gp <- gp + scale_y_continuous(limits = c(0,1.1), breaks = c(0,.5, 1)) + 
+    scale_fill_continuous(limits = c(0,1), breaks = c(0,.5, 1))
+    }
   return(gp)
 }
 
