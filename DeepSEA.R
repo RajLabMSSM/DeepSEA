@@ -125,8 +125,11 @@ DeepSEA.gather_predictions <- function(deepsea_path){
     # SNP-wise 'Functional Significant Scores'
     funsig <- data.table::fread(file.path(deepsea_path,locus,"infile.vcf.out.funsig")) 
     # SNP-wise probabilites of being eQTL, GWAS, or HGMD (The Human Gene Mutation Database) hit
-    snpclass <- data.table::fread(file.path(deepsea_path,locus,"infile.vcf.out.snpclass"))  
-    deepsea.dat <- cbind(snpclass, `Functional significance score`=funsig$`Functional significance score`) 
+    snpclass <- data.table::fread(file.path(deepsea_path,locus,"infile.vcf.out.snpclass"))
+    deepsea.dat <- data.table:::merge.data.table(snpclass,
+                                                  funsig[,c("chr","pos","Functional significance score")],
+                                                  by=c("chr","pos")) 
+    deepsea.dat <- cbind(Locus=locus, deepsea.dat)
     return(deepsea.dat)
   }) %>% data.table::rbindlist(fill=T)
   return(DS.predict)
@@ -145,6 +148,11 @@ DeepSEA.gather_enrichment <- function(deepsea_path, top_annots=F){
                                               id.vars = c("Locus","V1","chr","pos","name","ref","alt"),
                                               variable.name = "Annotation",
                                               value.name = "logFC") 
+  # gge <- ggplot(subset(DS.enrich, Locus=="BIN1"), aes(x=pos, y=logFC, color=logFC, fill=logFC)) + 
+  #           geom_point() +  
+  #           geom_smooth() + 
+  #           facet_grid(~Locus) 
+  # print(gge) 
   if(top_annots!=F){
     DS.enrich <- DS.enrich %>% dplyr::group_by(Locus, chr, pos, Annotation) %>%  
       dplyr::group_by(Locus, chr, pos) %>%
@@ -158,13 +166,12 @@ DeepSEA.prepare_data <- function(root="~/Desktop/Fine_Mapping",
                                  deepsea_path="./ROSMAP",
                                  GWAS_path=file.path(root,"Data/GWAS/Kunkle_2019/Kunkle_etal_Stage1_results.txt.gz") ){
   # merge DeepSEA results
-  DS.predict <- DeepSEA.gather_predictions(deepsea_path)
+  DS.predict <- DeepSEA.gather_predictions(deepsea_path) 
   DS.enrich <- DeepSEA.gather_enrichment(deepsea_path, top_annots=1)
   deepsea.DAT <- data.table:::merge.data.table(DS.predict,
                                                DS.enrich,
-                                               by= c("chr","pos","ref","alt"), all.x = T) %>% 
-    dplyr::mutate(Chromosome = as.numeric(gsub("chr","",chr)), Position=pos)
- 
+                                               by= c("Locus","chr","pos","ref","alt"), all.x = T) %>% 
+    dplyr::mutate(Chromosome = as.numeric(gsub("chr","",chr)), Position=pos) 
   # merge with Kunkle GWAS
   printer("DeepSEA:: Merging with GWAS data...")
   kunk <- data.table::fread(GWAS_path, nThread = 4)
@@ -212,9 +219,9 @@ DeepSEA.corrplot <- function(deepsea_path="./ROSMAP", deepsea.DAT, save_path=F){
  
 DeepSEA.plot_predictions <- function(deepsea.DAT, 
                                      label.snps,
-                                      keep_cols, 
-                                      facet_xlabs = T, 
-                                      custom_ylab=F){
+                                     keep_cols, 
+                                     facet_xlabs=T, 
+                                     custom_ylab=F){
   deepsea.melt <- data.table::melt.data.table(data.table::data.table(deepsea.DAT),
                                               id.vars = c("Locus","SNP","chr","pos"),
                                               measure.vars = c("Kunkle(2019) GWAS",
@@ -247,8 +254,7 @@ DeepSEA.plot_predictions <- function(deepsea.DAT,
                      label.padding = .25,
                      label.size=NA, 
                      seed = 1, 
-                     size = 3,
-                     min.segment.length = 1) + 
+                     size = 3) + 
     theme(#axis.title.x=element_blank(),
           # axis.text.x=element_blank(),
           # axis.ticks.x=element_blank(),
@@ -275,7 +281,8 @@ DeepSEA.plot_predictions <- function(deepsea.DAT,
 
 DeepSEA.plot_enrichment <- function(deepsea.DAT, label.snps){
   dat <- subset(deepsea.DAT, SNP %in% label.snps)
-  # infile.vcf.out.logfoldchange: Chromatin feature probability log fold changes log(p_alt/(1-p_alt))-log(p_ref/(1-p_ref)) for each variant. Computed by comparing the 'ref' and 'alt' files. Note that log fold change can be noisy when probabilities are small, therefore this score should be considered together with probability differences and E-values when evaluating the impact of a variant. 
+  # infile.vcf.out.logfoldchange: Chromatin feature probability log fold changes log(p_alt/(1-p_alt))-log(p_ref/(1-p_ref)) for each variant. Computed by comparing the 'ref' and 'alt' files. Note that log fold change can be noisy when probabilities are small, therefore this score should be considered together with probability differences and E-values when evaluating the impact of a variant.  
+  max.value <- ceiling(max(abs(dat$logFC)))
   enrich.plots <- lapply(sort(unique(dat$Locus)), function(locus){
     printer("DeepSEA:: Enrichment plot for",locus) 
     # Average by Annotation
@@ -303,7 +310,7 @@ DeepSEA.plot_enrichment <- function(deepsea.DAT, label.snps){
             panel.grid.minor = element_blank()) +  
       # labs(subtitle=paste0(locus,"\nEnrichment")) +
       scale_fill_viridis_c() + 
-      ylim(c(min(dat$logFC)-2, max(dat$logFC)))
+      ylim(c(-max.value, max.value))
     # print(enrich.plot)
     return(enrich.plot)
   })
@@ -313,15 +320,19 @@ DeepSEA.plot_enrichment <- function(deepsea.DAT, label.snps){
 
 DeepSEA.stacked_plots <- function(root="~/Desktop/Fine_Mapping/",
                                   deepsea_path="./ROSMAP",
-                                  deepsea.DAT=DeepSEA.prepare_data(deepsea_path=deepsea_path,
-                                                                   GWAS_path=file.path(root,"Data/GWAS/Kunkle_2019/Kunkle_etal_Stage1_results.txt.gz") ),
-                                  label_topn=3){   
+                                  deepsea.DAT=NULL,
+                                  label_topn=3){
+  if(is.null(deepsea.DAT)){
+    deepsea.DAT <- DeepSEA.prepare_data(deepsea_path=deepsea_path,
+                         GWAS_path=file.path(root,"Data/GWAS/Kunkle_2019/Kunkle_etal_Stage1_results.txt.gz") )
+  }
   # Get the top n SNPs to label
   label.snps <- (deepsea.DAT %>% dplyr::select(Locus, SNP, `Functional significance score`) %>%
     dplyr::group_by(Locus) %>%
     top_n(n=label_topn, wt=`Functional significance score`))$SNP
-  deepsea.DAT <- subset(deepsea.DAT, !(Locus %in% c("LRRK2",NA)) ) %>% 
-    dplyr::mutate("Kunkle(2019) GWAS"= -log10(as.numeric(Pvalue)))
+  deepsea.DAT <- (subset(deepsea.DAT, !(Locus %in% c("LRRK2",NA)) ) %>% 
+    dplyr::mutate("Kunkle(2019) GWAS"= -log10(as.numeric(Pvalue))) %>% 
+    dplyr::group_by(SNP) %>% arrange(`Functional significance score`)) %>% slice(1) # remove any duplicate rows
   
 
   # GWAS row  
