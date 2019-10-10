@@ -153,6 +153,10 @@ DeepSEA.gather_enrichment <- function(deepsea_path, top_annots=F){
   #           geom_smooth() + 
   #           facet_grid(~Locus) 
   # print(gge) 
+  printer("+ DeepSEA:: Extracting Source..")
+  DS.enrich$Source <- sub("\\|.*","", DS.enrich$Annotation)
+  printer("+ DeepSEA:: Extracting Assay..")
+  DS.enrich$Assay <- sapply(DS.enrich$Annotation, function(e){strsplit(e, "\\|")[[1]][2]})
   if(top_annots!=F){
     DS.enrich <- DS.enrich %>% dplyr::group_by(Locus, chr, pos, Annotation) %>%  
       dplyr::group_by(Locus, chr, pos) %>%
@@ -160,6 +164,8 @@ DeepSEA.gather_enrichment <- function(deepsea_path, top_annots=F){
   }
   return(DS.enrich)
 }
+
+
 
 
 DeepSEA.prepare_data <- function(root="~/Desktop/Fine_Mapping",
