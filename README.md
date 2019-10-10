@@ -41,7 +41,7 @@ See full code [here](./DeepSEA.R).
 	+ `GWAS-probability`: Probability that the position is a significant hit in the GWAS Catalogue. 
 	+ `HGMD-probability`: Probability that mutations in the position are deleterious, according to the HGMD database.
 	+ `Functional significance score`: Aggregate probability that mutations at this position have a functional impact.
-	+ `logFC`: log fold-change enrichment score (computed by comparing the differnces between the predicted effects of the ref vs. alt alleles) for each SNP for each epigenetic annotation.
+	+ `logFC`: Log fold-change enrichment score (computed by comparing the differences between the predicted effects of the ref vs. alt alleles) for each SNP for each epigenetic annotation.
 
 
 ### 3. Merge with GWAS Summary Statistics. 
@@ -64,7 +64,7 @@ See full code [here](./DeepSEA.R).
 	+ `GWAS-probability`
 	+ `HGMD-probability`
 	+ `Functional significance score`
-	+ `Enrichment`: Bar plots of of the logFC for the top SNPs with the highest `Functional significance score` within that locus. RSIDs are shown above their respective annotations, which include information about the tissue/cell line from which they came. There are many more signficant enrichment results but we just focused on these three per locus since they were most likely to have a functional impact.
+	+ `Enrichment`: Bar plots of of the logFC for the top three SNPs with the highest `Functional significance score` within that locus. RSIDs are shown above their respective annotations, which include information about the tissue/cell line from which they came. There are many more signficant enrichment results but we just focused on these three per locus since they were most likely to have a functional impact.
 	+ Download full-sized file [here](https://github.com/RajLabMSSM/DeepSEA/raw/master/ROSMAP/_plots/DeepSEA.predict.enrich.png).
 
 ![DeepSEA.predict.enrich.png](./ROSMAP/_plots/DeepSEA.predict.enrich.png)
@@ -77,7 +77,7 @@ See full code [here](./DeepSEA.R).
 
 - * Zhou, Jian, and Olga G. Troyanskaya. “Predicting Effects of Noncoding Variants with Deep Learning-Based Sequence Model.” Nature Methods 12, no. 10 (2015): 931–34. https://doi.org/10.1038/nmeth.3547. *
 
-- [DeepSEA online server](deepsea.princeton.edu)  
+- [DeepSEA online server](http://deepsea.princeton.edu)  
 
 - [Tensorflow implementation of DeepSEA](https://github.com/danvk/deepsea)  
 
